@@ -1,7 +1,9 @@
+import './styles.css';
+
 function List({name}) {
   return (
-    <div>
-      <h2>{name}</h2>
+    <div class='list'>
+      <h2 class='list-title'>{name}</h2>
       <ul>
         <li>Item a</li>
         <li>Item b</li>
