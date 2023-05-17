@@ -5,11 +5,11 @@ const favicon = require('serve-favicon')
 const app = express(); // create express app
 
 app.get('/', (_, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
-app.use(favicon(path.join(__dirname, 'public/images/favicon.ico')));
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use(favicon(path.join(__dirname, '../dist/images/favicon.ico')));
+app.use('/', express.static(path.join(__dirname, '../dist')));
 
 // start express server on port 5000
 app.listen(5000, () => {

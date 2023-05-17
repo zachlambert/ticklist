@@ -1,4 +1,3 @@
-import './styles.css';
 
 function List({name}) {
   return (
@@ -12,7 +11,7 @@ function List({name}) {
   )
 }
 
-export default function App() {
+function App() {
   return (
     <div>
       <h1>Lists</h1>
@@ -21,3 +20,5 @@ export default function App() {
     </div>
   )
 }
+
+export { App }
