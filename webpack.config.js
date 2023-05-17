@@ -1,9 +1,12 @@
+
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'main.js',
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   mode: 'development',
@@ -26,9 +29,26 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|ico)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
         type: 'asset/resource',
       },
     ]
-  }
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: "Lists",
+      favicon: './src/favicon.ico',
+      template: './src/index.html'
+    }),
+    new webpack.ProvidePlugin({
+      React: 'react'
+    })
+  ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    compress: true,
+    port: 9000,
+  },
 };

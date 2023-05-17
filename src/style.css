@@ -1,4 +1,13 @@
 
-.list {
-  color: #00ff00;
+h1 {
+  color: #0077bb;
 }
+
+.list-title {
+  color: #00aaff;
+}
+
+.list-text {
+  color: #111111;
+}
+

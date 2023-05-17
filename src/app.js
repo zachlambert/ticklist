@@ -1,9 +1,9 @@
 
 function List({name}) {
   return (
-    <div class='list'>
-      <h2 class='list-title'>{name}</h2>
-      <ul>
+    <div className='list'>
+      <h2 className='list-title'>{name}</h2>
+      <ul className='list-text'>
         <li>Item a</li>
         <li>Item b</li>
       </ul>
