@@ -35,11 +35,21 @@ function List({name}) {
 }
 
 function App() {
+  const [persons, setPersons] = useState([])
+  fetch('./users')
+    .then(response => response.json())
+    .then(persons => {
+      setPersons(persons);
+    });
   return (
     <div>
       <h1>Lists</h1>
       <List name="List 1"/>
       <List name="List 2"/>
+      <h1>Users</h1>
+      {
+        persons.map((person, idx) => { return (<li key={idx}>{ person.name }</li>); })
+      }
     </div>
   )
 }
