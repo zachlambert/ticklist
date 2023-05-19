@@ -1,6 +1,7 @@
 
 import { createRoot } from 'react-dom/client';
 
+import "bootstrap/dist/css/bootstrap.min.css"
 import "./style.css"
 import "./favicon.ico"
 import { App } from './app.js'

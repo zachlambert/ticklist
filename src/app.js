@@ -7,9 +7,9 @@ function List({name}) {
   const [newItem, setNewItem] =useState("")
 
   return (
-    <div className='list'>
+    <div className='constainer list'>
       <h2 className='list-title'>{name}</h2>
-      <ul className='list-content'>
+      <ul className='container list-item'>
         {
           items.map((item, idx) => {
             return (<li className='list-item list-item-text' key={idx}>{item}</li>);
@@ -42,7 +42,7 @@ function App() {
       setPersons(persons);
     });
   return (
-    <div>
+    <div className='container'>
       <h1>Lists</h1>
       <List name="List 1"/>
       <List name="List 2"/>
