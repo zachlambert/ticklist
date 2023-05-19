@@ -1,0 +1,24 @@
+
+$theme-color: #dd3300;
+$text-color: #333333;
+
+h1 {
+  color: $theme-color;
+}
+
+.list-title {
+  color: $theme-color;
+}
+
+.list-item {
+  list-style-type: none;
+  padding-bottom: 0.2em;
+}
+
+.list-text {
+  color: $text-color;
+}
+
+.list-input {
+  color: $text-color;
+}
