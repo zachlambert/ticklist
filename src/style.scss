@@ -2,6 +2,25 @@
 $theme-color: #dd3300;
 $text-color: #333333;
 
+.header {
+  background-color: #ffdddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+.sidebar {
+  background-color: #dddddd;
+};
+
+.content {
+  background-color: #ffddff;
+}
+
+.footer {
+  background-color: #ddddff;
+}
+
 h1 {
   color: $theme-color;
 }
@@ -12,7 +31,7 @@ h1 {
 
 .list-item {
   list-style-type: none;
-  padding-bottom: 0.2em;
+  // padding-bottom: 0.2em;
 }
 
 .list-text {

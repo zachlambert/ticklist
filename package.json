@@ -32,7 +32,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "start-dev": "webpack serve --port 5000",
+    "start-dev": "webpack serve",
     "start": "node server/index.js"
   }
 }
