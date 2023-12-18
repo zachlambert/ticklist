@@ -1,13 +1,13 @@
 
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
 
-module.exports = {
+export default {
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve('dist'),
   },
   mode: 'development',
   module: {
@@ -73,7 +73,7 @@ module.exports = {
   ],
   devServer: {
     static: {
-      directory: path.join(__dirname, 'dist'),
+      directory: 'dist',
     },
     compress: true,
     port: 9000,
