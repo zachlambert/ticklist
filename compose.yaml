@@ -9,15 +9,15 @@ services:
     ports:
       - "5432:5432"
     restart: always
-# ticklist-app:
-#   container_name: ticklist-app
-#   image: ticklist-app:latest
-#   ports:
-#     - "9000:9000"
-#   restart: always
-# ticklist-server:
-#   container_name: ticklist-server
-#   image: ticklist-server:latest
-#   ports:
-#     - "5432:5432"
-#   restart: always
+  ticklist-server:
+    container_name: ticklist-server
+    image: ticklist-server:latest
+    ports:
+      - "5000:5000"
+    restart: always
+  ticklist-app:
+    container_name: ticklist-app
+    image: ticklist-app:latest
+    ports:
+      - "9000:9000"
+    restart: always

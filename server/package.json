@@ -12,7 +12,7 @@
   "devDependencies": {
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "node src/server.js",
     "build-image": "docker build -t ticklist-server:latest ."
   }
 }
