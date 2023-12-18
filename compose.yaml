@@ -12,12 +12,14 @@ services:
   ticklist-server:
     container_name: ticklist-server
     image: ticklist-server:latest
+    build: ./server
     ports:
       - "5000:5000"
     restart: always
   ticklist-app:
     container_name: ticklist-app
     image: ticklist-app:latest
+    build: ./app
     ports:
       - "9000:9000"
     restart: always
