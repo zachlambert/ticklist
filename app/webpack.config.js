@@ -63,9 +63,9 @@ export default {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Lists",
-      favicon: './src/favicon.ico',
-      template: './src/index.html'
+      title: "Ticklist",
+      favicon: './src/public/favicon.ico',
+      template: './src/public/index.html'
     }),
     new webpack.ProvidePlugin({
       React: 'react'
