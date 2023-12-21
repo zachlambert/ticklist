@@ -13,6 +13,7 @@
   },
   "scripts": {
     "start": "node src/server.js",
+    "setup-db": "sql/setup",
     "build-image": "docker build -t ticklist-server:latest ."
   }
 }

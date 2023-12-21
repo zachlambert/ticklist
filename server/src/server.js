@@ -1,65 +1,34 @@
 
-import path from 'path';
 import express from 'express';
-// const { express } = express_pkg
-import pg from 'pg'
 import cors from 'cors';
+import pg from 'pg';
 
-const pool = new pg.Pool({
-  user: 'admin',
-  host: 'localhost',
-  database: 'api',
-  password: 'admin',
-  port: 5432
-});
+const app = express();
+const dev_app_url = 'http://localhost:9000'
+const db_host = 'localhost';
+const db_port = 5432;
+const db_name = 'app';
 
-const app = express(); // create express app
-
-const dev_app_server = 'http://localhost:9000'
 
 app.use(cors({
-  origin: [dev_app_server],
+  origin: [dev_app_url],
 }));
 
-app.use('/get_items', (_, response) => {
-  return response.status(200).json([
-    {
-      'name': 'Harry Potter',
-      'date_added': '2023-10-01',
-      'properties': {
-        'genre': 'Fantasy',
-        'type': 'Book Series',
-        'num_books': 7,
-      },
-    },
-    {
-      'name': 'The Hunger Games',
-      'date_added': '2023-10-02',
-      'properties': {
-        'genre': 'Young Adult',
-        'type': 'Book Series',
-        'num_books': 3,
-      },
-    },
-    {
-      'name': 'The Stormlight Archive',
-      'date_added': '2023-10-03',
-      'properties': {
-        'genre': 'Fantasy',
-        'type': 'Book Series',
-        'num_books': 4,
-      }
-    },
-  ])
-});
-
-app.use('/users', (_, response) => {
-  return pool.query('select * from Person order by Id asc', (error, results) => {
+app.use('/item', (_, response) => {
+  const pool = new pg.Pool({
+    host: db_host,
+    port: db_port,
+    database: db_name,
+    user: 'api_read',
+    user: 'api_read'
+  });
+  pool.query('select * from Item', (error, results) => {
     if (error) {
       throw error;
     }
     return response.status(200).json(results.rows);
   });
+  pool.end();
 });
 
 // start express server on port 5000
