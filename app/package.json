@@ -5,7 +5,6 @@
   "description": "Frontend app for ticklist",
   "private": true,
   "dependencies": {
-    "bootstrap": "^5.2.3",
     "jquery": "^3.7.0",
     "popper": "^1.0.1",
     "serve-favicon": "^2.5.0"
