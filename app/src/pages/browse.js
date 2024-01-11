@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const server_url = 'http://localhost:5000/'
+const server_url = 'http://localhost:5000'
 
 function Header() {
   return (
@@ -69,24 +69,24 @@ function Sidebar() {
 function BrowseList() {
 
   const [items, setItems] = useState([])
-  fetch(server_url + 'get_items')
+  fetch(server_url + '/item')
     .then(response => response.json())
     .then(items => {
       setItems(items);
     });
 
   return (
-    <ul className='container list-item'>
+    <div>
       {
         items.map((item, idx) => {
           return (
-            <li key={idx}>
+            <div key={idx} className='list-item'>
               { item.name }
-            </li>
+            </div>
           );
         })
       }
-    </ul>
+    </div>
   );
 }
 

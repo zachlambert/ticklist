@@ -1,8 +1,9 @@
 
 import { createRoot } from 'react-dom/client';
 
-import "bootstrap/dist/css/bootstrap.min.css"
-import "./public/style.scss"
+// import "bootstrap/dist/css/bootstrap.min.css"
+import "./public/style/reset.css"
+import "./public/style/style.scss"
 import "./public/favicon.ico"
 import { Browse } from './pages/browse.js'
 
