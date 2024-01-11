@@ -12,6 +12,7 @@ body {
 
 #root {
   display: grid;
+  background-color: #eeeeee;
 }
 
 /* Mobile */
@@ -37,7 +38,7 @@ body {
 .header {
   grid-area: header;
   height: 100px;
-  background-color: pink;
+  background-color: #eeeeee;
 }
 
 h2, h3, h4, h5 {
@@ -47,11 +48,10 @@ h2, h3, h4, h5 {
 
 .content {
   grid-area: content;
-  background-color: gray;
+  background-color: white;
 }
 
 .list-header {
-  background-color: yellow;
   line-height: 1;
   padding: $list-padding;
 }
@@ -68,11 +68,10 @@ h2, h3, h4, h5 {
   gap: 0 $list-padding;
   padding: $list-padding;
   padding-bottom: 0;
-  background-color: red;
 }
 
 .list-item {
-  background-color: white;
+  background-color: #eeeeee;
   width: min(100%, $item-width);
   flex-grow: 1;
   margin-bottom: $list-padding;
@@ -97,6 +96,10 @@ h2, h3, h4, h5 {
 
 .list-item-content {
   min-height: 300px
+}
+
+.list-item-content > img {
+  width: 100%;
 }
 
 .list-item-dummy {
