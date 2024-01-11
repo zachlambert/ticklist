@@ -12,7 +12,7 @@ function List() {
     });
 
   return (
-    <div>
+    <div className='list-container'>
       {
         items.map((item, idx) => {
           return (
@@ -22,13 +22,15 @@ function List() {
           );
         })
       }
+      <div className='list-item list-item-dummy'></div>
+      <div className='list-item list-item-dummy'></div>
     </div>
   );
 }
 
 function Browse() {
   return (
-    <div className='container-fluid p-2'>
+    <div className='content'>
       <h2>Browse</h2>
       <List />
     </div>
