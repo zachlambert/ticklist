@@ -8,7 +8,7 @@ function ListItem({item}) {
   return (
     <div className='list-item'>
       <div className='list-item-header'>
-        <div><Link to={`item/${item.id}`}>{item.name}</Link></div>
+        <div><Link to={`item/${item.slug}`}>{item.name}</Link></div>
         <div className='list-item-header-fill'></div>
         <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.item_type }</span></div>
       </div>

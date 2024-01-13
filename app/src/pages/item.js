@@ -8,10 +8,10 @@ const server_url = 'http://localhost:5000'
 
 export function Item() {
   const [item, setItem] = useState(null);
-  const { id } = useParams();
+  const { slug } = useParams();
 
   useEffect(() => {
-    fetch(server_url + `/item/${id}`)
+    fetch(server_url + `/item/${slug}`)
       .then(response => response.json())
       .then(item => {
         setItem(item);

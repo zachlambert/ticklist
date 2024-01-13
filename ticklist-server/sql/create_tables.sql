@@ -26,8 +26,10 @@ create table Item (
     id serial primary key,
     name text not null,
     item_type_id serial references ItemType(id),
+    slug text not null,
     properties text not null,
-    unique (name, item_type_id)
+    unique (name, item_type_id),
+    unique (slug)
 );
 
 create table ListItem (

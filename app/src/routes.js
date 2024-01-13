@@ -12,7 +12,7 @@ export const routes = [
     element: <Account />
   },
   {
-    path: '/item/:id',
+    path: '/item/:slug',
     element: <Item />
   }
 ];

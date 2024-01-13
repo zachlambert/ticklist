@@ -9,13 +9,14 @@ struct Item {
     id: i32,
     name: String,
     item_type: String,
+    slug: String,
     properties: String,
 }
 
 #[get("/items")]
 async fn items(state: actix_web::web::Data<AppState>) -> impl Responder {
     let query = r#"
-    select Item.id, Item.name, ItemType.name as item_type, Item.properties
+    select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
     "#;
 
@@ -35,17 +36,17 @@ async fn items(state: actix_web::web::Data<AppState>) -> impl Responder {
     return HttpResponse::Ok().body(json);
 }
 
-#[get("/item/{id}")]
+#[get("/item/{slug}")]
 async fn item(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl Responder {
-    let id: i32 = req.match_info().get("id").unwrap().parse().unwrap();
+    let slug: String = req.match_info().get("slug").unwrap().parse().unwrap();
     let query = r#"
-    select Item.id, Item.name, ItemType.name as item_type, Item.properties
+    select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
-    where Item.id = $1
+    where Item.slug = $1
     "#;
 
     let result: Item = match sqlx::query_as::<_, Item>(query)
-        .bind(id)
+        .bind(slug)
         .fetch_one(&state.pool).await
     {
         Ok(query) => query,
