@@ -11,11 +11,9 @@ export function Item() {
   const { id } = useParams();
 
   useEffect(() => {
-    console.log(`Loading from ${id}`);
     fetch(server_url + `/item/${id}`)
       .then(response => response.json())
       .then(item => {
-        console.log(item);
         setItem(item);
       });
   }, []);

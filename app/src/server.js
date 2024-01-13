@@ -77,6 +77,13 @@ export async function renderApp(req) {
 
 app.use(express.static(distpath));
 
+// Use for testing
+function simulateDelay(millis) {
+  return (_req, _res, next) => {
+    setTimeout(next, millis);
+  };
+}
+
 app.get('*', (req, res) => {
   renderApp(req).then((app) => {
     const result = index_html.replace(

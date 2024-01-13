@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const server_url = 'http://localhost:5000'
 
 
-function Item({item}) {
+function ListItem({item}) {
   return (
     <div className='list-item'>
       <div className='list-item-header'>
-        <div><a href={`item/${item.id}`}>{ item.name }</a></div>
+        <div><Link to={`item/${item.id}`}>{item.name}</Link></div>
         <div className='list-item-header-fill'></div>
         <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.item_type }</span></div>
       </div>
@@ -38,7 +39,7 @@ function List({title}) {
         {
           items.map((item, idx) => {
             return (
-              <Item
+              <ListItem
                 key={idx}
                 item={item}
               />
@@ -52,4 +53,4 @@ function List({title}) {
   );
 }
 
-export { List }
+export { List, ListItem }
