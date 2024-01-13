@@ -20,7 +20,7 @@ app.use('/items', (_, response) => {
     port: db_port,
     database: db_name,
     user: 'api_read',
-    user: 'api_read'
+    password: 'api_read'
   });
 
   const query = `
@@ -43,7 +43,7 @@ app.use('/item/:id', (req, response) => {
     port: db_port,
     database: db_name,
     user: 'api_read',
-    user: 'api_read'
+    password: 'api_read'
   });
 
   // TODO: Make secure
