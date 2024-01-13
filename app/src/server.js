@@ -15,7 +15,7 @@ import { routes } from './routes.js';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const distpath = path.join(__dirname, '../dist/client');
 
-const index_html = fs.readFileSync(path.join(distpath, 'index.html'), 'utf8');
+const index_html = fs.readFileSync(path.join(__dirname, './public/index.html'), 'utf8');
 const staticHandler = createStaticHandler(routes);
 
 const app = express();
@@ -79,10 +79,11 @@ app.use(express.static(distpath));
 
 app.get('*', (req, res) => {
   renderApp(req).then((app) => {
-    res.send(index_html.replace(
-      '<div id=\'root\'></div>',
-      `<div id='root'>${app}</div>`
-    ));
+    const result = index_html.replace(
+      `<div id="root"></div>`,
+      `<div id="root">${app}</div>`
+    );
+    res.send(result);
   });
 });
 

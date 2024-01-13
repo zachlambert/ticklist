@@ -1,5 +1,6 @@
 use std::io::{Error, ErrorKind};
 use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
 use sqlx::PgPool;
 use serde::{Serialize, Deserialize};
 
@@ -80,12 +81,16 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(
         move || {
-            return App::new()
+            let cors = Cors::default()
+              .allowed_origin("http://localhost:9000");
+
+            App::new()
                 .app_data(data.clone())
+                .wrap(cors)
                 .service(items)
-                .service(item);
+                .service(item)
         })
-        .bind(("127.0.0.1", 8080))?
+        .bind(("127.0.0.1", 5000))?
         .run()
         .await
 }

@@ -64,11 +64,11 @@ const clientConfig = {
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      title: "Ticklist",
-      favicon: './src/public/favicon.ico',
-      template: './src/public/index.html'
-    }),
+    // new HtmlWebpackPlugin({
+    //   title: "Ticklist",
+    //   favicon: './src/public/favicon.ico',
+    //   template: './src/public/index.html'
+    // }),
     new webpack.ProvidePlugin({
       React: 'react'
     })

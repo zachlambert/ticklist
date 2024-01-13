@@ -19,8 +19,8 @@ app.use('/items', (_, response) => {
     host: db_host,
     port: db_port,
     database: db_name,
-    user: 'api_read',
-    password: 'api_read'
+    user: 'api',
+    password: 'api'
   });
 
   const query = `
@@ -42,8 +42,8 @@ app.use('/item/:id', (req, response) => {
     host: db_host,
     port: db_port,
     database: db_name,
-    user: 'api_read',
-    password: 'api_read'
+    user: 'api',
+    password: 'api'
   });
 
   // TODO: Make secure

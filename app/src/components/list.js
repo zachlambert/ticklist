@@ -9,7 +9,7 @@ function Item({item}) {
       <div className='list-item-header'>
         <div><a href={`item/${item.id}`}>{ item.name }</a></div>
         <div className='list-item-header-fill'></div>
-        <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.type }</span></div>
+        <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.item_type }</span></div>
       </div>
       <div className='list-item-content'>
         <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
