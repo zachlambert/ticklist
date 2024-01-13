@@ -25,7 +25,6 @@ function List({title}) {
     fetch(server_url + '/items')
       .then(response => response.json())
       .then(items => {
-        console.log(items);
         setItems(items);
       });
   }, []);
