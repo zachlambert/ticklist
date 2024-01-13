@@ -1,15 +1,15 @@
 import { Header } from '../components/header.js'
 import { List } from '../components/list.js'
 
-function Browse() {
+function Account() {
   return (
     <div className='content'>
       <Header />
       <List
-        title={'Browse'}
+        title={'Account'}
       />
     </div>
   );
 }
 
-export { Browse }
+export { Account }

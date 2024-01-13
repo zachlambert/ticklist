@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const server_url = 'http://localhost:5000'
 
@@ -7,9 +7,9 @@ function Item({item}) {
   return (
     <div className='list-item'>
       <div className='list-item-header'>
-        <div><h3>{ item.name }</h3></div>
+        <div><a href={`item/${item.id}`}>{ item.name }</a></div>
         <div className='list-item-header-fill'></div>
-        <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>Type</span></div>
+        <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.type }</span></div>
       </div>
       <div className='list-item-content'>
         <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
@@ -18,19 +18,22 @@ function Item({item}) {
   )
 }
 
-function List() {
+function List({title}) {
 
-  const [items, setItems] = useState([])
-  fetch(server_url + '/item')
-    .then(response => response.json())
-    .then(items => {
-      setItems(items);
-    });
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    fetch(server_url + '/items')
+      .then(response => response.json())
+      .then(items => {
+        console.log(items);
+        setItems(items);
+      });
+  }, []);
 
   return (
     <div className='list-container'>
       <div className='list-header'>
-        <h2>Browse</h2>
+        <h2>{title}</h2>
       </div>
       <div className='list-content'>
         {

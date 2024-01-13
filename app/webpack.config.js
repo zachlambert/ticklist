@@ -3,11 +3,13 @@ import path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import webpack from 'webpack';
 
-export default {
+const clientConfig = {
+  target: 'web',
   entry: './src/index.js',
   output: {
     filename: 'bundle.js',
-    path: path.resolve('dist'),
+    path: path.resolve('dist/client'),
+    publicPath: '/',
   },
   mode: 'development',
   module: {
@@ -71,11 +73,37 @@ export default {
       React: 'react'
     })
   ],
-  devServer: {
-    static: {
-      directory: 'dist',
-    },
-    compress: true,
-    port: 9000,
-  },
 };
+
+const serverConfig = {
+  target: 'node',
+  entry: './src/server.js',
+  output: {
+    filename: 'bundle.cjs',
+    path: path.resolve('dist/server'),
+  },
+  mode: 'development',
+  module: {
+    rules: [
+      {
+        test: /\.(?:js|mjs|cjs)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-react', { targets: "defaults" }]
+            ]
+          }
+        }
+      },
+    ]
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      React: 'react'
+    })
+  ],
+};
+
+export default [ clientConfig, serverConfig ];

@@ -14,7 +14,7 @@ app.use(cors({
   origin: [dev_app_url],
 }));
 
-app.use('/item', (_, response) => {
+app.use('/items', (_, response) => {
   const pool = new pg.Pool({
     host: db_host,
     port: db_port,
@@ -22,11 +22,43 @@ app.use('/item', (_, response) => {
     user: 'api_read',
     user: 'api_read'
   });
-  pool.query('select * from Item', (error, results) => {
+
+  const query = `
+  select Item.id, Item.name, ItemType.name as type, Item.properties
+  from Item join Itemtype on Item.item_type_id = ItemType.id
+  `;
+
+  pool.query(query, (error, results) => {
     if (error) {
       throw error;
     }
     return response.status(200).json(results.rows);
+  });
+  pool.end();
+});
+
+app.use('/item/:id', (req, response) => {
+  const pool = new pg.Pool({
+    host: db_host,
+    port: db_port,
+    database: db_name,
+    user: 'api_read',
+    user: 'api_read'
+  });
+
+  // TODO: Make secure
+  const query = `
+  select Item.id, Item.name, ItemType.name as type, Item.properties
+  from Item join Itemtype on Item.item_type_id = ItemType.id
+  where Item.id=${req.params.id}
+  `;
+
+  pool.query(query, (error, results) => {
+    if (error) {
+      return response.status(500).json({ error: error.message });
+      throw error;
+    }
+    return response.status(200).json(results.rows[0]);
   });
   pool.end();
 });
