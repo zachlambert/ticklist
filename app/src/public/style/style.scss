@@ -88,8 +88,18 @@ h2, h3, h4, h5 {
   flex-grow: 1;
 }
 
+.list-item-header a {
+  text-decoration: none;
+  color: black;
+}
+.list-item-header a:visited {
+  color: black;
+}
+.list-item-header a:hover {
+  color: #9999ff;
+}
+
 .list-item-header-type > span {
-  flex-grow: 1;
   padding: 10px;
   border-radius: 5px;
 }
@@ -107,4 +117,17 @@ h2, h3, h4, h5 {
   flex-grow: 1;
   height: 0;
   margin: 0;
+}
+
+.list-item-tags {
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.list-item-tag > span {
+  padding: 5px 10px 5px 10px;
+  border-radius: 5px;
 }
