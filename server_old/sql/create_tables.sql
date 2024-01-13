@@ -53,7 +53,5 @@ create table ItemTag (
 
 -- Role permissions
 
-grant select on all tables in schema public to api_read;
-grant usage, select on all sequences in schema public to api_read;
-grant select, insert, update, delete on all tables in schema public to api_write;
-grant usage, select on all sequences in schema public to api_write;
+grant select, insert, update, delete on all tables in schema public to api;
+grant usage, select on all sequences in schema public to api;

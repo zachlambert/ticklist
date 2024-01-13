@@ -1,9 +1,7 @@
+use std::io::{Error, ErrorKind};
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
-use sqlx::postgres::PgPoolOptions;
+use sqlx::PgPool;
 use serde::{Serialize, Deserialize};
-
-const DB_HOST: &str = "localhost";
-const DB_NAME: &str = "app";
 
 #[derive(Serialize, Deserialize)]
 struct Item {
@@ -14,32 +12,23 @@ struct Item {
 }
 
 #[get("/items")]
-async fn items() -> impl Responder {
-
-    let user = "api_read";
-    let password = "api_read";
-    let pool = match PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&format!("postgres://{password}:{user}@{DB_HOST}/{DB_NAME}")).await
-    {
-        Ok(pool) => pool,
-        Err(err) => return HttpResponse::InternalServerError().body(err.to_string()),
-    };
-
+async fn items(state: actix_web::web::Data<AppState>) -> impl Responder {
     let result: Vec<Item> = match sqlx::query_as!(Item,
         r#"
         select Item.id, Item.name, ItemType.name as item_type, Item.properties
         from Item join Itemtype on Item.item_type_id = ItemType.id
         "#)
-        .fetch_all(&pool).await
+        .fetch_all(&state.pool).await
     {
         Ok(query) => query,
-        Err(err) => return HttpResponse::InternalServerError().body(err.to_string()),
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
     };
 
     let json = match serde_json::to_string(&result) {
         Ok(json) => json,
-        Err(err) => return HttpResponse::InternalServerError().body(err.to_string()),
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
     };
     return HttpResponse::Ok().body(json);
 }
@@ -49,15 +38,32 @@ async fn item(req_body: String) -> impl Responder {
     return HttpResponse::Ok().body(req_body);
 }
 
+struct AppState {
+    pool: PgPool,
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    return HttpServer::new(
-        || {
+    let database_url = match dotenvy::var("DATABASE_URL") {
+        Ok(value) => value,
+        Err(err) => return Err(Error::new(ErrorKind::Other, err.to_string())),
+    };
+    let pool = match PgPool::connect(&database_url).await {
+        Ok(value) => value,
+        Err(err) => return Err(Error::new(ErrorKind::Other, err.to_string())),
+    };
+    let data = actix_web::web::Data::new(AppState {
+        pool,
+    });
+
+    HttpServer::new(
+        move || {
             return App::new()
+                .app_data(data.clone())
                 .service(items)
                 .service(item);
         })
         .bind(("127.0.0.1", 8080))?
         .run()
-        .await;
+        .await
 }
