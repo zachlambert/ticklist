@@ -1,9 +1,9 @@
 use std::io::{Error, ErrorKind};
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use sqlx::PgPool;
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, sqlx::FromRow)]
 struct Item {
     id: i32,
     name: String,
@@ -13,14 +13,15 @@ struct Item {
 
 #[get("/items")]
 async fn items(state: actix_web::web::Data<AppState>) -> impl Responder {
-    let result: Vec<Item> = match sqlx::query_as!(Item,
-        r#"
-        select Item.id, Item.name, ItemType.name as item_type, Item.properties
-        from Item join Itemtype on Item.item_type_id = ItemType.id
-        "#)
+    let query = r#"
+    select Item.id, Item.name, ItemType.name as item_type, Item.properties
+    from Item join Itemtype on Item.item_type_id = ItemType.id
+    "#;
+
+    let result: Vec<Item> = match sqlx::query_as::<_, Item>(query)
         .fetch_all(&state.pool).await
     {
-        Ok(query) => query,
+        Ok(result) => result,
         Err(err) => return HttpResponse::InternalServerError()
             .body(err.to_string()),
     };
@@ -33,9 +34,30 @@ async fn items(state: actix_web::web::Data<AppState>) -> impl Responder {
     return HttpResponse::Ok().body(json);
 }
 
-#[get("/item")]
-async fn item(req_body: String) -> impl Responder {
-    return HttpResponse::Ok().body(req_body);
+#[get("/item/{id}")]
+async fn item(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl Responder {
+    let id: i32 = req.match_info().get("id").unwrap().parse().unwrap();
+    let query = r#"
+    select Item.id, Item.name, ItemType.name as item_type, Item.properties
+    from Item join Itemtype on Item.item_type_id = ItemType.id
+    where Item.id = $1
+    "#;
+
+    let result: Item = match sqlx::query_as::<_, Item>(query)
+        .bind(id)
+        .fetch_one(&state.pool).await
+    {
+        Ok(query) => query,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+
+    let json = match serde_json::to_string(&result) {
+        Ok(json) => json,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+    return HttpResponse::Ok().body(json);
 }
 
 struct AppState {
