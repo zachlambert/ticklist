@@ -138,3 +138,45 @@ insert into Item (name, item_type_id, slug, properties) values
         'yotsuba&!-manga',
         '{ "author": "Kiyohiko Azuma" }'
     );
+
+insert into Account (name) values
+    ('alice'), ('bob'), ('chloe'), ('daniel'), ('erin'), ('felix');
+
+insert into Tag (name) values
+    ('action'), ('thriller'), ('comedy'), ('romance'), ('fantasy'), ('scifi');
+
+insert into ItemTag (item_id, tag_id, vote_count, vote_score_sum) values
+    (
+        (select id from Item where slug='inception-film'),
+        (select id from Tag where name='thriller'),
+        3,
+        300
+    );
+insert into ItemTagVote (account_id, item_tag_id, score) values
+    ((select id from Account where name='alice'), 1, 100),
+    ((select id from Account where name='bob'), 1, 100),
+    ((select id from Account where name='chloe'), 1, 100);
+
+insert into ItemTag (item_id, tag_id, vote_count, vote_score_sum) values
+    (
+        (select id from Item where slug='inception-film'),
+        (select id from Tag where name='scifi'),
+        4,
+        400
+    );
+insert into ItemTagVote (account_id, item_tag_id, score) values
+    ((select id from Account where name='alice'), 2, 100),
+    ((select id from Account where name='bob'), 2, 100),
+    ((select id from Account where name='chloe'), 2, 100),
+    ((select id from Account where name='daniel'), 2, 100);
+
+insert into ItemTag (item_id, tag_id, vote_count, vote_score_sum) values
+    (
+        (select id from Item where slug='inception-film'),
+        (select id from Tag where name='action'),
+        2,
+        200
+    );
+insert into ItemTagVote (account_id, item_tag_id, score) values
+    ((select id from Account where name='alice'), 3, 100),
+    ((select id from Account where name='bob'), 3, 100);

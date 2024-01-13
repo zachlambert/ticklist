@@ -50,7 +50,18 @@ create table Tag (
 create table ItemTag (
     id serial primary key,
     item_id serial references Item(id),
-    tag_id serial references Tag(id)
+    tag_id serial references Tag(id),
+    vote_count integer default 1,
+    vote_score_sum integer default 0,
+    unique (item_id, tag_id)
+);
+
+create table ItemTagVote (
+    id serial primary key,
+    account_id serial references Account(id),
+    item_tag_id serial references ItemTag(id),
+    score integer default 0,
+    unique (account_id, item_tag_id)
 );
 
 -- Role permissions
