@@ -2,9 +2,9 @@ use std::io::{Error, ErrorKind};
 use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 use sqlx::PgPool;
-use serde::{Serialize, Deserialize};
+use serde::Serialize;
 
-#[derive(Serialize, Deserialize, sqlx::FromRow)]
+#[derive(Serialize, sqlx::FromRow)]
 struct Item {
     id: i32,
     name: String,
@@ -62,6 +62,40 @@ async fn item(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl R
     return HttpResponse::Ok().body(json);
 }
 
+#[derive(Serialize, sqlx::FromRow)]
+struct ItemTag {
+    tag: String,
+    vote_count: i32,
+    vote_score_mean: f32
+}
+
+#[get("/item/{id}/tags")]
+async fn item_tags(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl Responder {
+    let id: i64 = req.match_info().get("id").unwrap().parse().unwrap();
+    let query = r#"
+    select Tag.name as tag, ItemTag.vote_count, ItemTag.vote_score_mean
+    from ItemTag join Tag on ItemTag.tag_id = Tag.id
+    where ItemTag.item_id = $1
+    order by ItemTag.vote_score_mean desc, ItemTag.vote_count desc
+    "#;
+
+    let result: Vec<ItemTag> = match sqlx::query_as::<_, ItemTag>(query)
+        .bind(id)
+        .fetch_all(&state.pool).await
+    {
+        Ok(result) => result,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+
+    let json = match serde_json::to_string(&result) {
+        Ok(json) => json,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+    return HttpResponse::Ok().body(json);
+}
+
 struct AppState {
     pool: PgPool,
 }
@@ -90,6 +124,7 @@ async fn main() -> std::io::Result<()> {
                 .wrap(cors)
                 .service(items)
                 .service(item)
+                .service(item_tags)
         })
         .bind(("127.0.0.1", 5000))?
         .run()

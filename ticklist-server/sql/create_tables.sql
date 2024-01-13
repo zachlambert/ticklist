@@ -53,6 +53,7 @@ create table ItemTag (
     tag_id serial references Tag(id),
     vote_count integer default 1,
     vote_score_sum integer default 0,
+    vote_score_mean real default 0.0,
     unique (item_id, tag_id)
 );
 
