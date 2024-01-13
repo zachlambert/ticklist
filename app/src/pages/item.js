@@ -1,5 +1,6 @@
 import { Header } from '../components/header.js';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 // TODO: Import from somewhere
 const server_url = 'http://localhost:5000'
@@ -7,7 +8,7 @@ const server_url = 'http://localhost:5000'
 
 export function Item() {
   const [item, setItem] = useState(null);
-  const id = 2;
+  const { id } = useParams();
 
   useEffect(() => {
     console.log(`Loading from ${id}`);

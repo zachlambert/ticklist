@@ -5,7 +5,7 @@ import webpack from 'webpack';
 
 const clientConfig = {
   target: 'web',
-  entry: './src/index.js',
+  entry: './src/client.js',
   output: {
     filename: 'bundle.js',
     path: path.resolve('dist/client'),
