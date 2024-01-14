@@ -1,5 +1,6 @@
 use sqlx::PgPool;
 use serde::Serialize;
+use crate::error::Error;
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Item {
@@ -10,23 +11,77 @@ pub struct Item {
     properties: String,
 }
 
-pub async fn get_items(pool: &PgPool) -> Result<Vec<Item>, String> {
+#[derive(Debug, Serialize, sqlx::FromRow)]
+pub struct ItemType {
+    id: i32,
+    name: String,
+    properties_schema: String,
+}
+
+pub async fn get_item_type(pool: &PgPool, name: &str) -> Result<ItemType, Error> {
+    let query = r#"
+    select * from ItemType where ItemType.name = $1
+    "#;
+
+    match sqlx::query_as::<_, ItemType>(query)
+        .bind(name)
+        .fetch_one(pool).await
+    {
+        Ok(result) => Ok(result),
+        Err(sqlx::Error::RowNotFound) => Err(Error::ItemTypeNotFound(name.to_string())),
+        Err(err) => Err(Error::SqlError(err)),
+    }
+}
+
+pub fn create_item_slug(name: &str, item_type: &str) -> String {
+    let mut slug = String::new();
+    slug.push_str(&name.to_string().to_lowercase());
+    slug.push_str("-");
+    slug.push_str(&item_type.to_string().to_lowercase());
+    return slug;
+}
+
+pub async fn create_item(
+    pool: &PgPool,
+    name: &str,
+    item_type: &str,
+    properties: &str) -> Result<Item, Error>
+{
+    let item_type = get_item_type(pool, item_type).await?;
+    let slug = create_item_slug(name, &item_type.name);
+
+    let query = r#"
+    insert into Item values (name, item_type_id, slug, properties)
+    values ($1, $2, $3, $4)
+    "#;
+
+    match sqlx::query_as::<_, Item>(query)
+        .bind(name)
+        .bind(item_type.id)
+        .bind(slug)
+        .bind(properties)
+        .fetch_one(pool).await
+    {
+        Ok(result) => Ok(result),
+        Err(err) => Err(Error::SqlError(err)),
+    }
+}
+
+pub async fn get_items(pool: &PgPool) -> Result<Vec<Item>, Error> {
     let query = r#"
     select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
     "#;
 
-    let result: Vec<Item> = match sqlx::query_as::<_, Item>(query)
+    match sqlx::query_as::<_, Item>(query)
         .fetch_all(pool).await
     {
-        Ok(result) => result,
-        Err(err) => return Err(err.to_string()),
-    };
-
-    return Ok(result);
+        Ok(result) => Ok(result),
+        Err(err) => Err(Error::SqlError(err)),
+    }
 }
 
-pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Option<Item>, String> {
+pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Item, Error> {
     let query = r#"
     select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
@@ -37,12 +92,9 @@ pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Option<Item>,
         .bind(slug)
         .fetch_one(pool).await
     {
-        Ok(query) => Ok(Some(query)),
-        Err(sqlx::Error::RowNotFound) => Ok(None),
-        Err(err) => {
-            println!("{:?}", err);
-            return Err(err.to_string())
-        },
+        Ok(query) => Ok(query),
+        Err(sqlx::Error::RowNotFound) => Err(Error::ItemNotFound(slug.to_string())),
+        Err(err) => Err(Error::SqlError(err)),
     }
 }
 
