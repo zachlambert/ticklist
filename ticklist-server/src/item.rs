@@ -26,6 +26,26 @@ pub async fn get_items(pool: &PgPool) -> Result<Vec<Item>, String> {
     return Ok(result);
 }
 
+pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Option<Item>, String> {
+    let query = r#"
+    select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
+    from Item join Itemtype on Item.item_type_id = ItemType.id
+    where Item.slug = $1
+    "#;
+
+    match sqlx::query_as::<_, Item>(query)
+        .bind(slug)
+        .fetch_one(pool).await
+    {
+        Ok(query) => Ok(Some(query)),
+        Err(sqlx::Error::RowNotFound) => Ok(None),
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(err.to_string())
+        },
+    }
+}
+
 /*
 #[get("/item/{slug}")]
 async fn item(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl Responder {
