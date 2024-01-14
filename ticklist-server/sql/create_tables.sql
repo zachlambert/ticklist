@@ -19,8 +19,9 @@ create table AccountSession (
 create table ItemType (
     id serial primary key,
     name text not null,
-    properties_schema text not null,
-    unique (name)
+    slug text not null,
+    schema text not null,
+    unique (slug)
 );
 
 create table Item (
@@ -29,7 +30,6 @@ create table Item (
     item_type_id serial references ItemType(id),
     slug text not null,
     properties text not null,
-    unique (name, item_type_id),
     unique (slug)
 );
 

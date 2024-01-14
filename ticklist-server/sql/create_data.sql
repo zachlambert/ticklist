@@ -1,140 +1,231 @@
-insert into ItemType (name) values
-    ('Film'),
-    ('TV Series'),
-    ('Book Series'),
-    ('Anime Series'),
-    ('Manga');
+insert into ItemType (name, slug, schema) values
+    (
+        'Film',
+        'film',
+        '{
+            "title": "Film",
+            "description": "Film",
+            "type": "object",
+            "properties": {
+                "director": {
+                    "description": "Director of film",
+                    "type": "string"
+                }
+                "duration": {
+                    "description": "Film duration in minutes",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                }
+            },
+            "required": [ "director", "duration" ]
+        }'
+    ),
+    (
+        'TV Series',
+        'tv-series',
+        '{
+            "title": "TV Series",
+            "description": "TV Series",
+            "type": "object",
+            "properties": {
+                "numSeasons": {
+                    "description": "Number of seasons",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                }
+            },
+            "required": [ "numSeasons" ]
+        }'
+    ),
+    (
+        'Book Series',
+        'book-series',
+        '{
+            "title": "Book Series",
+            "description": "Book Series",
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "Author",
+                    "type": "string"
+                }
+                "numBooks": {
+                    "description": "Number of books",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                }
+            },
+            "required": [ "numBooks" ]
+        }'
+    ),
+    (
+        'Anime Series',
+        'anime-series',
+        '{
+            "title": "Anime Series",
+            "description": "Anime Series",
+            "type": "object",
+            "properties": {
+                "numSeasons": {
+                    "description": "Number of seasons",
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                }
+            },
+            "required": [ "numSeasons" ]
+        }'
+    ),
+    (
+        'Manga',
+        'manga',
+        '{
+            "title": "Manga",
+            "description": "Manga",
+            "type": "object",
+            "properties": {
+                "author": {
+                    "description": "Author",
+                    "type": "string"
+                },
+                "artist": {
+                    "description": "Artist, if different to author",
+                    "type": "string"
+                }
+            },
+            "required": [ "author" ]
+        }'
+    );
 
 insert into Item (name, item_type_id, slug, properties) values
     (
         'Inception',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'inception-film',
-        '{ "director": "Christopher Nolan", "genre": "Thriller" }'
+        '{ "director": "Christopher Nolan" }'
     ),
     (
         'Jurassic Park',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'jurassic-park-film',
-        '{ "director": "Steven Spielberg", "genre": "Action" }'
+        '{ "director": "Steven Spielberg" }'
     ),
     (
         'Avatar',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'avatar-film',
-        '{ "director": "James Cameron", "genre": "Sci-fi" }'
+        '{ "director": "James Cameron" }'
     ),
     (
         'The Departed',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'the-departed-film',
-        '{ "director": "Martin Scorsese", "genre": "Thriller" }'
+        '{ "director": "Martin Scorsese" }'
     ),
     (
         'Fight Club',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'fight-club-film',
-        '{ "director": "David Fincher", "genre": "Thriller" }'
+        '{ "director": "David Fincher" }'
     ),
     (
         'Shaun of the Dead',
-        (select id from ItemType where name='Film'),
+        (select id from ItemType where slug='film'),
         'shaun-of-the-dead-film',
-        '{ "director": "Edgar Wright", "genre": "Comedy" }'
+        '{ "director": "Edgar Wright" }'
     ),
     (
         'Lost',
-        (select id from ItemType where name='TV Series'),
+        (select id from ItemType where slug='tv-series'),
         'lost-tv-series',
-        '{ "seasons": 5 }'
+        '{ "numSeasons": 5 }'
     ),
     (
         'Fringe',
-        (select id from ItemType where name='TV Series'),
+        (select id from ItemType where slug='tv-series'),
         'fringe-series',
-        '{ "seasons": 5 }'
+        '{ "numSeasons": 5 }'
     ),
     (
         'The Office (US)',
-        (select id from ItemType where name='TV Series'),
+        (select id from ItemType where slug='tv-series'),
         'the-office-(US)-tv-series',
-        '{ "seasons": 7 }'
+        '{ "numSeasons": 7 }'
     ),
     (
         'Peep Show',
-        (select id from Itemtype where name='TV Series'),
+        (select id from Itemtype where slug='tv-series'),
         'peep-show-tv-series',
-        '{ "seasons": 9 }'
+        '{ "numSeasons": 9 }'
     ),
     (
         'The Hunger Games',
-        (select id from Itemtype where name='Book Series'),
+        (select id from Itemtype where slug='book-series'),
         'the-hunger-games-book-series',
-        '{ "author": "Suzanne Collins", "genre": "Young Adult" }'
+        '{ "author": "Suzanne Collins", "numBooks": 3 }'
     ),
     (
         'Harry Potter',
-        (select id from Itemtype where name='Book Series'),
+        (select id from Itemtype where slug='book-series'),
         'harry-potter-book-series',
-        '{ "author": "JK Rowling", "genre": "Fantasy" }'
+        '{ "author": "JK Rowling", "numBooks": 7 }'
     ),
     (
         'Alex Rider',
-        (select id from Itemtype where name='Book Series'),
+        (select id from Itemtype where slug='book-series'),
         'alex-rider-book-series',
-        '{ "author": "Anothony Horowitz", "genre": "Thriller" }'
+        '{ "author": "Anothony Horowitz", "numBooks": 7 }'
     ),
     (
         'The Stormlight Archive',
-        (select id from Itemtype where name='Book Series'),
+        (select id from Itemtype where slug='book-series'),
         'the-stormlight-archive-book-series',
-        '{ "author": "Brandon Sanderson", "genre": "Fantasy" }'
+        '{ "author": "Brandon Sanderson", "numBooks": 4 }'
     ),
     (
         'The First Law',
-        (select id from Itemtype where name='Book Series'),
+        (select id from Itemtype where slug='book-series'),
         'the-first-law-book-series',
-        '{ "author": "Joe Abercrombie", "genre": "Fantasy" }'
+        '{ "author": "Joe Abercrombie", "numBooks": 3 }'
     ),
     (
         'Attack on Titan',
-        (select id from Itemtype where name='Anime Series'),
+        (select id from Itemtype where slug='anime-series'),
         'attack-on-titan-anime-series',
-        '{ "source": "Manga", "genre": "Action" }'
+        '{ "numSeasons": 4 }'
     ),
     (
         'Gintama',
-        (select id from Itemtype where name='Anime Series'),
+        (select id from Itemtype where slug='anime-series'),
         'gintama-anime-series',
-        '{ "source": "Manga", "genre": "Comedy" }'
+        '{ "numSeasons": 6 }'
     ),
     (
         'Death Note',
-        (select id from Itemtype where name='Anime Series'),
+        (select id from Itemtype where slug='anime-series'),
         'death-note-anime-series',
-        '{ "source": "Manga", "genre": "Thriller" }'
+        '{ "numSeasons": 1 }'
     ),
     (
         'Steins; Gate',
-        (select id from Itemtype where name='Anime Series'),
+        (select id from Itemtype where slug='anime-series'),
         'steins;-gate-anime-series',
-        '{ "source": "Visual Novel", "genre": "Thriller" }'
+        '{ "numSeasons": 1 }'
     ),
     (
         'Berserk',
-        (select id from Itemtype where name='Manga'),
+        (select id from Itemtype where slug='manga'),
         'berserk-manga',
         '{ "author": "Kentaro Miura" }'
     ),
     (
         'Attack on Titan',
-        (select id from Itemtype where name='Manga'),
+        (select id from Itemtype where slug='manga'),
         'attack-on-titan-manga',
         '{ "author": "Hajime Isayama" }'
     ),
     (
         'Yotsuba&!',
-        (select id from Itemtype where name='Manga'),
+        (select id from Itemtype where slug='manga'),
         'yotsuba&!-manga',
         '{ "author": "Kiyohiko Azuma" }'
     );

@@ -1,6 +1,7 @@
 use sqlx::PgPool;
 use serde::Serialize;
 use crate::error::Error;
+use jsonschema::JSONSchema;
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Item {
@@ -15,61 +16,103 @@ pub struct Item {
 pub struct ItemType {
     id: i32,
     name: String,
-    properties_schema: String,
+    slug: String,
+    schema: String,
 }
 
-pub async fn get_item_type(pool: &PgPool, name: &str) -> Result<ItemType, Error> {
+#[derive(sqlx::FromRow)]
+pub struct IdReturn {
+    id: i32,
+}
+
+pub async fn get_item_type(pool: &PgPool, slug: &str) -> Result<ItemType, Error> {
     let query = r#"
-    select * from ItemType where ItemType.name = $1
+    select * from ItemType where ItemType.slug = $1
     "#;
 
     match sqlx::query_as::<_, ItemType>(query)
-        .bind(name)
+        .bind(slug)
         .fetch_one(pool).await
     {
         Ok(result) => Ok(result),
-        Err(sqlx::Error::RowNotFound) => Err(Error::ItemTypeNotFound(name.to_string())),
+        Err(sqlx::Error::RowNotFound) => Err(Error::ItemTypeNotFound),
         Err(err) => Err(Error::SqlError(err)),
     }
 }
 
-pub fn create_item_slug(name: &str, item_type: &str) -> String {
+pub fn create_item_slug(name: &str, item_type: &ItemType) -> String {
     let mut slug = String::new();
-    slug.push_str(&name.to_string().to_lowercase());
+    slug.push_str(&name.to_string().to_lowercase().replace(" ", "-"));
     slug.push_str("-");
-    slug.push_str(&item_type.to_string().to_lowercase());
+    slug.push_str(&item_type.slug);
     return slug;
 }
 
 pub async fn create_item(
     pool: &PgPool,
     name: &str,
-    item_type: &str,
+    item_type_slug: &str,
     properties: &str) -> Result<Item, Error>
 {
-    let item_type = get_item_type(pool, item_type).await?;
-    let slug = create_item_slug(name, &item_type.name);
+    let item_type = get_item_type(pool, item_type_slug).await?;
+
+    let schema_json: serde_json::Value = match serde_json::from_str(&item_type.schema) {
+        Ok(result) => result,
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(Error::ItemTypeSchemaInvalid);
+        },
+    };
+
+    let schema = match JSONSchema::options()
+        .with_draft(jsonschema::Draft::Draft7)
+        .compile(&schema_json)
+    {
+        Ok(result) => result,
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(Error::ItemTypeSchemaInvalid);
+        },
+    };
+
+    let properties_json: serde_json::Value = match serde_json::from_str(properties) {
+        Ok(result) => result,
+        Err(err) => {
+            println!("{:?}", err);
+            return Err(Error::ItemPropertiesInvalid);
+        }
+    };
+
+    match schema.validate(&properties_json) {
+        Ok(_) => (),
+        Err(_) => return Err(Error::ItemPropertiesInvalid)
+    }
+
+    let slug = create_item_slug(name, &item_type);
 
     let query = r#"
-    insert into Item values (name, item_type_id, slug, properties)
+    insert into Item (name, item_type_id, slug, properties)
     values ($1, $2, $3, $4)
+    returning id
     "#;
 
-    match sqlx::query_as::<_, Item>(query)
+    let id = match sqlx::query_as::<_, IdReturn>(query)
         .bind(name)
         .bind(item_type.id)
         .bind(slug)
         .bind(properties)
         .fetch_one(pool).await
     {
-        Ok(result) => Ok(result),
-        Err(err) => Err(Error::SqlError(err)),
-    }
+        Ok(result) => result.id,
+        Err(err) => return Err(Error::SqlError(err)),
+    };
+
+    get_item_by_id(pool, id).await
 }
 
 pub async fn get_items(pool: &PgPool) -> Result<Vec<Item>, Error> {
     let query = r#"
-    select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
+    select Item.id, Item.name, ItemType.slug as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
     "#;
 
@@ -81,9 +124,26 @@ pub async fn get_items(pool: &PgPool) -> Result<Vec<Item>, Error> {
     }
 }
 
+pub async fn get_item_by_id(pool: &PgPool, id: i32) -> Result<Item, Error> {
+    let query = r#"
+    select Item.id, Item.name, ItemType.slug as item_type, Item.slug, Item.properties
+    from Item join Itemtype on Item.item_type_id = ItemType.id
+    where Item.id = $1
+    "#;
+
+    match sqlx::query_as::<_, Item>(query)
+        .bind(id)
+        .fetch_one(pool).await
+    {
+        Ok(query) => Ok(query),
+        Err(sqlx::Error::RowNotFound) => Err(Error::ItemNotFound),
+        Err(err) => Err(Error::SqlError(err)),
+    }
+}
+
 pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Item, Error> {
     let query = r#"
-    select Item.id, Item.name, ItemType.name as item_type, Item.slug, Item.properties
+    select Item.id, Item.name, ItemType.slug as item_type, Item.slug, Item.properties
     from Item join Itemtype on Item.item_type_id = ItemType.id
     where Item.slug = $1
     "#;
@@ -93,7 +153,7 @@ pub async fn get_item_by_slug(pool: &PgPool, slug: &str) -> Result<Item, Error> 
         .fetch_one(pool).await
     {
         Ok(query) => Ok(query),
-        Err(sqlx::Error::RowNotFound) => Err(Error::ItemNotFound(slug.to_string())),
+        Err(sqlx::Error::RowNotFound) => Err(Error::ItemNotFound),
         Err(err) => Err(Error::SqlError(err)),
     }
 }

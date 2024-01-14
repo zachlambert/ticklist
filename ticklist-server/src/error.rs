@@ -1,8 +1,9 @@
 #[derive(Debug)]
 pub enum Error {
-    ItemNotFound(String),
-    ItemPropertiesInvalid(String),
-    ItemTypeNotFound(String),
+    ItemNotFound,
+    ItemPropertiesInvalid,
+    ItemTypeSchemaInvalid,
+    ItemTypeNotFound,
     EnvironmentError(String),
     SqlError(sqlx::Error),
 }
