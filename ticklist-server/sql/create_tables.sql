@@ -19,6 +19,7 @@ create table AccountSession (
 create table ItemType (
     id serial primary key,
     name text not null,
+    properties_schema text not null,
     unique (name)
 );
 
