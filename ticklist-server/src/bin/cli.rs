@@ -1,5 +1,5 @@
 use ticklist::{
-    item::{get_items, get_item_by_slug, create_item},
+    item::{get_items, get_item_by_slug, create_item, get_item_tags},
     error::Error,
     conn::get_database_conn
 };
@@ -37,7 +37,9 @@ fn main() -> Result<(), Error> {
         },
         CliCommand::GetItem{ slug } => {
             let item = block_on(get_item_by_slug(&conn, &slug))?;
-            println!("{:?}", item);
+            println!("ITEM:\n{:?}", item);
+            let tags = block_on(get_item_tags(&conn, item.id))?;
+            println!("TAGS:\n{:?}", tags);
         },
         CliCommand::CreateItem { name, item_type, properties } => {
             let item = block_on(create_item(&conn, &name, &item_type, &properties));
