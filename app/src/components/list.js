@@ -1,19 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { TagList } from './tag.js'
 
 const server_url = 'http://localhost:5000'
-
-function tagColor(tag) {
-  const min = 150;
-  const max = 255;
-  let score_color = min + Math.floor((tag.vote_score_mean/100) * (max-min));
-  score_color = Math.max(min, Math.min(max, score_color));
-  const rgb = [
-    min, min, score_color
-  ];
-  const hex = '#' + rgb.map((x) => x.toString(16)).join('');
-  return hex;
-}
 
 function ListItem({item}) {
 
@@ -33,17 +22,7 @@ function ListItem({item}) {
         <div className='list-item-header-fill'></div>
         <div className='list-item-header-type'><span style={{backgroundColor: '#ff9999'}}>{ item.item_type }</span></div>
       </div>
-      <div className='list-item-tags'>
-        {
-          tags.map((tag, idx) => {
-            return (
-              <div key={idx} className='list-item-tag'>
-                <span style={{backgroundColor: tagColor(tag)}}>{tag.tag}</span>
-              </div>
-            )
-          })
-        }
-      </div>
+      <TagList tags={tags} />
       <div className='list-item-content'>
         <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
       </div>

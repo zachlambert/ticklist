@@ -3,7 +3,7 @@ use actix_web::{get, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
 use sqlx::PgPool;
 use ticklist::{
-    item::{get_items, get_item_by_slug, get_item_tags},
+    item::{get_items, get_item_by_slug, get_item_tags, get_item_type},
     conn::get_database_conn
 };
 
@@ -54,6 +54,22 @@ async fn item_tags(state: actix_web::web::Data<AppState>, req: HttpRequest) -> i
     return HttpResponse::Ok().body(json);
 }
 
+#[get("/item-type/{slug}")]
+async fn item_type(state: actix_web::web::Data<AppState>, req: HttpRequest) -> impl Responder {
+    let slug: String = req.match_info().get("slug").unwrap().parse().unwrap();
+    let result = match get_item_type(&state.pool, &slug).await {
+        Ok(result) => result,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+    let json = match serde_json::to_string(&result) {
+        Ok(json) => json,
+        Err(err) => return HttpResponse::InternalServerError()
+            .body(err.to_string()),
+    };
+    return HttpResponse::Ok().body(json);
+}
+
 struct AppState {
     pool: PgPool,
 }
@@ -79,6 +95,7 @@ async fn main() -> std::io::Result<()> {
                 .service(items)
                 .service(item)
                 .service(item_tags)
+                .service(item_type)
         })
         .bind(("127.0.0.1", 5000))?
         .run()

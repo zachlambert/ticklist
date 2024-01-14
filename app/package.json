@@ -8,7 +8,11 @@
     "express": "^4.18.2",
     "jquery": "^3.7.0",
     "popper": "^1.0.1",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "ajv": "^8.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.21.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.5",
@@ -18,11 +22,7 @@
     "babel-loader": "^9.1.2",
     "body-parser": "^1.20.2",
     "css-loader": "^6.7.4",
-    "html-webpack-plugin": "^5.5.1",
     "postcss-loader": "^7.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.2",
     "sass": "^1.62.1",
     "sass-loader": "^13.2.2",
     "style-loader": "^3.3.3",

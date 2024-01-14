@@ -11,13 +11,8 @@ insert into ItemType (name, slug, schema) values
                     "description": "Director of film",
                     "type": "string"
                 }
-                "duration": {
-                    "description": "Film duration in minutes",
-                    "type": "number",
-                    "exclusiveMinimum": 0
-                }
             },
-            "required": [ "director", "duration" ]
+            "required": [ "director" ]
         }'
     ),
     (
@@ -48,7 +43,7 @@ insert into ItemType (name, slug, schema) values
                 "author": {
                     "description": "Author",
                     "type": "string"
-                }
+                },
                 "numBooks": {
                     "description": "Number of books",
                     "type": "number",
