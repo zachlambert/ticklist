@@ -1,6 +1,39 @@
 
 import path from 'path';
 import webpack from 'webpack';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
+
+const tailwindConfig = {
+  content: ['./src/**/*.{js,jsx}', './public/index.html'],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+
+const cssConfig = {
+  test: /\.css$/i,
+  use: [
+    {
+      loader: 'style-loader',
+    },
+    {
+      loader: 'css-loader',
+    },
+    {
+      loader: 'postcss-loader',
+      options: {
+        postcssOptions: {
+          plugins: [
+            tailwindcss(tailwindConfig),
+            autoprefixer
+          ],
+        }
+      },
+    }
+  ],
+};
 
 const clientConfig = {
   target: 'web',
@@ -26,40 +59,10 @@ const clientConfig = {
         }
       },
       {
-        test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
-      },
-      {
         test: /\.(png|svg|jpg|jpeg|gif|ico)$/,
         type: 'asset/resource',
       },
-      {
-        test: /\.(scss)$/,
-        use: [
-          {
-            loader: 'style-loader', // Inject CSS
-          },
-          {
-            loader: 'css-loader', // Translates CSS into CommonJS modules
-          },
-          {
-            loader: 'postcss-loader', // Run post CSS actions
-            options: {
-              postcssOptions: {
-                plugins: function() { // Post CSS plugins
-                  require [
-                    require('precss'),
-                    require('autoprefixer')
-                  ]
-                }
-              }
-            }
-          },
-          {
-            loader: 'sass-loader' // Compile Sass to CSS
-          }
-        ]
-      },
+      cssConfig
     ]
   },
   plugins: [
@@ -91,6 +94,7 @@ const serverConfig = {
           }
         }
       },
+      cssConfig
     ]
   },
   plugins: [

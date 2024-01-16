@@ -43,7 +43,7 @@ function List({title}) {
 
   return (
     <div className='list-container'>
-      <div className='list-header'>
+      <div className='list-header bg-red-900'>
         <h2>{title}</h2>
       </div>
       <div className='list-content'>

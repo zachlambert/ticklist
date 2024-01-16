@@ -1,5 +1,4 @@
-import './public/style/reset.css';
-import './public/style/style.scss';
+import './style.css';
 import { routes } from './routes.js';
 
 import ReactDOMClient from 'react-dom/client';
