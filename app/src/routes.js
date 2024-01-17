@@ -1,19 +1,18 @@
-import { Browse } from './pages/browse.js';
-import { Account } from './pages/account.js';
-import { Item } from './pages/item.js';
-import { Page } from './components/page.js'
+import { BrowsePage } from './pages/browse.js';
+import { AccountPage } from './pages/account.js';
+import { ItemPage } from './pages/item.js';
 
 export const routes = [
   {
     path: '/',
-    element: <Page><Browse/></Page>
+    element: <BrowsePage/>
   },
   {
     path: '/list',
-    element: <Page><Account/></Page>
+    element: <AccountPage/>
   },
   {
     path: '/item/:slug',
-    element: <Page><Item/></Page>
+    element: <ItemPage/>
   }
 ];

@@ -1,9 +1,12 @@
+import { Page } from '../components/page.js'
 import { List } from '../components/list.js'
 
-export function Browse() {
+export function BrowsePage() {
   return (
-    <List
-      title={'Browse'}
-    />
+    <Page>
+      <List
+        title={'Browse'}
+      />
+    </Page>
   );
 }

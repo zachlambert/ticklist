@@ -1,4 +1,3 @@
-
 function tagColor(tag) {
   const min = 150;
   const max = 255;

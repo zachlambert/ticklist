@@ -1,71 +1,46 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { TagList } from './tag.js';
+import { serverUrl } from '../data.js';
 
-import Ajv from 'ajv';
 
-function ViewProperty({schema, object}) {
-  switch (schema.type) {
-    case 'string':
-      if (!object instanceof String) {
-        throw new Error("Schema and item mismatch");
-      }
-      return (
-        <div className='view-item-value view-item-string'>{object}</div>
-      )
-    case 'number':
-      if (!object instanceof String) {
-        throw new Error("Schema and item mismatch");
-      }
-      return (
-        <div className='view-item-value view-item-number'>{object}</div>
-      )
-    case 'object':
-      let rows = [];
-      for (const key in schema.properties) {
-        const child_schema = schema.properties[key];
-        console.log(child_schema);
-        if (!key in object) {
-          throw new Error("Schema and item mismatch");
-        }
-        const child_object = object[key];
-        rows.push((
-          <div key={key}>
-            <div className='view-item-name'>
-              {child_schema.description}
-            </div>
-            <ViewProperty
-              schema={child_schema}
-              object={child_object}
-            />
-          </div>
-        ))
-      }
-      return (
-        <div className='view-item-value view-item-object'>
-          {rows}
+export function Item({item, className}) {
+
+  const [tags, setTags] = useState([]);
+  useEffect(() => {
+    fetch(serverUrl + `/item/${item.id}/tags`)
+      .then(response => response.json())
+      .then(tags => {
+        setTags(tags);
+      });
+  }, []);
+
+  // TODO: Property of the list item type
+  const typeColor = '#ff9999';
+
+  return (
+    <div className='size-full bg-slate-200'>
+      <div className='flex flex-row flex-nowrap items-center'>
+        <div className='m-2 text-lg'>
+          <Link
+            className='hover:text-slate-400'
+            to={`/item/${item.slug}`}
+          >
+            {item.name}
+          </Link>
         </div>
-      )
-    default:
-      throw new Error(`Unknown property type '${schema.type}' in schema`);
-  }
+        <div className='grow'></div>
+        <div className='px-2 py-1 m-2 rounded' style={{backgroundColor: typeColor}}>
+          <span>{ item.item_type }</span>
+        </div>
+      </div>
+      <TagList tags={tags} />
+      <div className='mh-[theme(dim.listItemWidth)]'>
+        <img
+          className='w-full'
+          src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'
+        />
+      </div>
+    </div>
+  )
 }
-
-function ItemProperties({item, item_type}) {
-  if (!item || !item_type) {
-    return (<div></div>)
-  }
-
-  const schema = JSON.parse(item_type.schema);
-  const properties = JSON.parse(item.properties);
-
-  const ajv = new Ajv();
-  const validate = ajv.compile(schema);
-  if (!validate(properties)) {
-    throw new Error("Invalid item properties");
-  }
-
-  return <ViewProperty
-    schema={schema}
-    object={properties}
-  />
-}
-
-export { ItemProperties };

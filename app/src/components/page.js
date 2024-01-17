@@ -25,7 +25,7 @@ function Header() {
   )
 }
 
-function Page({children}) {
+export function Page({children}) {
   const padding = (
     <div className='
       bg-gray-400
@@ -33,7 +33,7 @@ function Page({children}) {
       xl:grow'/>
   );
   return (
-    <div className='flex flex-row flex-nowrap'>
+    <div className='flex flex-row flex-nowrap min-h-screen'>
       {padding}
       <div className='grow xl:grow-0 xl:w-[1280px]'>
         <Header/>
@@ -43,5 +43,3 @@ function Page({children}) {
     </div>
   );
 }
-
-export { Page }

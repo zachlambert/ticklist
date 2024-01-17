@@ -1,51 +1,54 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { TagList } from '../components/tag.js';
-import { ItemProperties } from '../components/item.js';
+import { serverUrl } from '../data.js';
 
-// TODO: Import from somewhere
-const server_url = 'http://localhost:5000'
+import { Page } from '../components/page.js';
+import { Item } from '../components/item.js';
+import { Properties } from '../components/properties.js';
 
 
-export function Item() {
+export function ItemPage() {
   const [item, setItem] = useState(null);
   const [tags, setTags] = useState([]);
   const [itemType, setItemType] = useState(null);
   const { slug } = useParams();
 
   useEffect(() => {
-    fetch(server_url + `/item/${slug}`)
+    fetch(serverUrl + `/item/${slug}`)
       .then(response => response.json())
       .then(item => {
         setItem(item);
-        fetch(server_url + `/item/${item.id}/tags`)
+        fetch(serverUrl + `/item/${item.id}/tags`)
           .then(response => response.json())
           .then(setTags);
-        fetch(server_url + `/item-type/${item.item_type}`)
+        fetch(serverUrl + `/item-type/${item.item_type}`)
           .then(response => response.json())
           .then(setItemType);
       });
   }, []);
 
-  if (!item) {
+  if (!item || !itemType) {
     return <></>;
   }
+  const itemProperties = JSON.parse(item.properties);
+  const itemTypeSchema = JSON.parse(itemType.schema);
 
   return (
-    <div className='item-content'>
-      <div className='item-summary'>
-        <div className='item-summary-left'>
-          <h2>{item.name}</h2>
-          <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
+    <Page>
+      <div>
+        <div className='flex flex-row'>
+          <div className='w-2/5 p-4'>
+            <Item item={item} />
+          </div>
+          <div className='p-4'>
+            <Properties properties={itemProperties} schema={itemTypeSchema}/>
+          </div>
         </div>
-        <div className='item-summary-right'>
-          <TagList tags={tags}/>
-          <ItemProperties item={item} item_type={itemType}/>
+        <div>
+          <p>TODO: Details</p>
         </div>
       </div>
-      <div className='item-details'>
-      </div>
-    </div>
+    </Page>
   );
 }
