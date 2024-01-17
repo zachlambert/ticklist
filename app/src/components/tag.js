@@ -13,15 +13,23 @@ function tagColor(tag) {
 
 function Tag({tag}) {
   return (
-    <div className='list-item-tag'>
-      <span style={{backgroundColor: tagColor(tag)}}>{tag.tag}</span>
+    <div
+      className='px-2 py-1 rounded'
+      style={{backgroundColor: tagColor(tag)}}
+    >
+      <span>{tag.tag}</span>
     </div>
   );
 }
 
 function TagList({tags}) {
   return (
-    <div className='list-item-tags'>
+    <div className='
+      flex flex-row flex-nowrap
+      items-center
+      gap-2
+      px-2 py-1
+    '>
       {
         tags.map((tag, idx) => {
           return (<Tag key={idx} tag={tag} />)

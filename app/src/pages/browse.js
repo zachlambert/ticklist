@@ -1,15 +1,9 @@
-import { Header } from '../components/header.js'
 import { List } from '../components/list.js'
 
-function Browse() {
+export function Browse() {
   return (
-    <div className='content'>
-      <Header />
-      <List
-        title={'Browse'}
-      />
-    </div>
+    <List
+      title={'Browse'}
+    />
   );
 }
-
-export { Browse }

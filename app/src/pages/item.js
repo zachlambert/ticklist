@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Header } from '../components/header.js';
 import { TagList } from '../components/tag.js';
 import { ItemProperties } from '../components/item.js';
 
@@ -30,29 +29,22 @@ export function Item() {
   }, []);
 
   if (!item) {
-    return (
-      <div className='content'>
-        <Header />
-      </div>
-    );
+    return <></>;
   }
 
   return (
-    <div className='content'>
-      <Header />
-      <div className='item-content'>
-        <div className='item-summary'>
-          <div className='item-summary-left'>
-            <h2>{item.name}</h2>
-            <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
-          </div>
-          <div className='item-summary-right'>
-            <TagList tags={tags}/>
-            <ItemProperties item={item} item_type={itemType}/>
-          </div>
+    <div className='item-content'>
+      <div className='item-summary'>
+        <div className='item-summary-left'>
+          <h2>{item.name}</h2>
+          <img src='https://myframeworks.org/wp-content/uploads/2020/07/square-placeholder.jpg'/>
         </div>
-        <div className='item-details'>
+        <div className='item-summary-right'>
+          <TagList tags={tags}/>
+          <ItemProperties item={item} item_type={itemType}/>
         </div>
+      </div>
+      <div className='item-details'>
       </div>
     </div>
   );

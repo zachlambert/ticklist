@@ -7,7 +7,10 @@ import autoprefixer from 'autoprefixer';
 const tailwindConfig = {
   content: ['./src/**/*.{js,jsx}', './public/index.html'],
   theme: {
-    extend: {},
+    dim: {
+      listPadding: '30px',
+      listItemWidth: '350px',
+    }
   },
   plugins: [],
 };
