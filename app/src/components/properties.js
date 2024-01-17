@@ -4,17 +4,17 @@ function ViewProperty({schema, object}) {
   switch (schema.type) {
     case 'string':
       if (!object instanceof String) {
-        throw new Error("Schema and item mismatch");
+        throw new Error("Schema and object mismatch");
       }
       return (
-        <div className='view-item-value view-item-string'>{object}</div>
+        <div>{object}</div>
       )
     case 'number':
       if (!object instanceof String) {
-        throw new Error("Schema and item mismatch");
+        throw new Error("Schema and object mismatch");
       }
       return (
-        <div className='view-item-value view-item-number'>{object}</div>
+        <div>{object}</div>
       )
     case 'object':
       let rows = [];
@@ -26,9 +26,9 @@ function ViewProperty({schema, object}) {
         }
         const child_object = object[key];
         rows.push((
-          <div key={key}>
-            <div className='view-item-name'>
-              {child_schema.description}
+          <div key={key} className='flex flex-row flex-nowrap align-baseline gap-2 p-2'>
+            <div>
+              {child_schema.description}:
             </div>
             <ViewProperty
               schema={child_schema}
@@ -38,7 +38,7 @@ function ViewProperty({schema, object}) {
         ))
       }
       return (
-        <div className='view-item-value view-item-object'>
+        <div className='flex flex-col flex-nowrap'>
           {rows}
         </div>
       )
