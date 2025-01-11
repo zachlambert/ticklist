@@ -1,7 +1,8 @@
 use sqlx::PgPool;
 use serde::Serialize;
 use crate::error::Error;
-use jsonschema::JSONSchema;
+use jsonschema::JSONSchema as JsonSchema;
+use crate::slug::create_slug;
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct Item {
@@ -14,10 +15,10 @@ pub struct Item {
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct ItemType {
-    id: i32,
-    name: String,
-    slug: String,
-    schema: String,
+    pub id: i32,
+    pub name: String,
+    pub slug: String,
+    pub schema: String,
 }
 
 #[derive(sqlx::FromRow)]
@@ -27,11 +28,43 @@ pub struct IdReturn {
 
 #[derive(Debug, Serialize, sqlx::FromRow)]
 pub struct ItemTag {
-    tag: String,
-    vote_count: i32,
-    vote_score_mean: f32
+    pub tag: String,
+    pub vote_count: i32,
+    pub vote_score_mean: f32
 }
 
+pub async fn create_item_type(pool: &PgPool, name: &str, schema: &str) -> Result<ItemType, Error> {
+    println!("{:?}", schema);
+
+    let query = r#"
+    insert into ItemType (name, slug, schema)
+    values ($1, $2, $3)
+    returning id
+    "#;
+
+    match sqlx::query_as::<_, ItemType>(query)
+        .bind(name)
+        .bind(create_slug(name))
+        .bind(schema)
+        .fetch_one(pool).await
+    {
+        Ok(result) => Ok(result),
+        Err(err) => Err(Error::SqlError(err)),
+    }
+}
+
+pub async fn get_item_types(pool: &PgPool) -> Result<Vec<ItemType>, Error> {
+    let query = r#"
+    select * from ItemType
+    "#;
+
+    match sqlx::query_as::<_, ItemType>(query)
+        .fetch_all(pool).await
+    {
+        Ok(result) => Ok(result),
+        Err(err) => Err(Error::SqlError(err)),
+    }
+}
 
 pub async fn get_item_type(pool: &PgPool, slug: &str) -> Result<ItemType, Error> {
     let query = r#"
@@ -46,14 +79,6 @@ pub async fn get_item_type(pool: &PgPool, slug: &str) -> Result<ItemType, Error>
         Err(sqlx::Error::RowNotFound) => Err(Error::ItemTypeNotFound),
         Err(err) => Err(Error::SqlError(err)),
     }
-}
-
-pub fn create_item_slug(name: &str, item_type: &ItemType) -> String {
-    let mut slug = String::new();
-    slug.push_str(&name.to_string().to_lowercase().replace(" ", "-"));
-    slug.push_str("-");
-    slug.push_str(&item_type.slug);
-    return slug;
 }
 
 pub async fn create_item(
@@ -72,7 +97,7 @@ pub async fn create_item(
         },
     };
 
-    let schema = match JSONSchema::options()
+    let schema = match JsonSchema::options()
         .with_draft(jsonschema::Draft::Draft7)
         .compile(&schema_json)
     {
@@ -96,7 +121,7 @@ pub async fn create_item(
         Err(_) => return Err(Error::ItemPropertiesInvalid)
     }
 
-    let slug = create_item_slug(name, &item_type);
+    let slug = vec![create_slug(name), item_type.slug].join("-");
 
     let query = r#"
     insert into Item (name, item_type_id, slug, properties)

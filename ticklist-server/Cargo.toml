@@ -7,10 +7,12 @@ edition = "2021"
 anyhow = "1.0"
 actix-web = "4"
 actix-cors = "0.6"
+chrono = { version = "0.4.31", features = ["serde"] }
 clap = { version = "4.4", features = ["derive"] }
 dotenvy = "0.15.0"
 futures = "0.3"
 jsonschema = "0.17.1"
 sqlx = { version = "0.7", features = ["runtime-async-std-native-tls", "postgres"] }
+schemars = "0.8.16"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
